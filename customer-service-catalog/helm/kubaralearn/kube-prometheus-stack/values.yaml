@@ -6,9 +6,6 @@ externalSecrets:
     - dataFrom:
         - remoteKey: grafana_credentials
       target: grafana-admin-credentials
-    - dataFrom:
-        - remoteKey: grafana_oauth2_credentials
-      target: oauth2-credentials
 kube-prometheus-stack:
   alertmanager:
     alertmanagerSpec:

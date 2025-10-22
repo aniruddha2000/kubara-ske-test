@@ -53,7 +53,7 @@ clusters:
       homerDashboard:
         status: enabled
       oauth2Proxy:
-        status: enabled
+        status: disabled
       metricsServer:
         status: disabled
       metalLb:

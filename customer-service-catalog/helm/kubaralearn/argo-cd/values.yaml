@@ -54,6 +54,14 @@ argo-cd:
       ingressClassName: nginx
       path: /argocd
       tls: true
+    params:
+      server.basehref: /argocd
+      server.insecure: true
+      server.rootpath: /argocd
+    rbac:
+      policy.csv: |
+        g, oidc-org:org-team, role:admin
+      policy.default: role:readonly
 bootstrapValues:
   applicationSets:
     - apps:
@@ -143,7 +151,7 @@ inClusterSecretLabels:
   longhorn: disabled
   metallb: disabled
   metrics-server: disabled
-  oauth2-proxy: enabled
+  oauth2-proxy: disabled
 namespace:
   labels:
     project-name: kubaralearn
