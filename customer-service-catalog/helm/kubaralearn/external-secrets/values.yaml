@@ -1,0 +1,18 @@
+clusterSecretStores: {}
+external-secrets:
+  certController:
+    imagePullSecrets:
+      - name: image-pull-secret
+  imagePullSecrets:
+    - name: image-pull-secret
+  serviceMonitor:
+    additionalLabels:
+      monitoring.instance: kubaralearn-dev
+    enabled: true
+  webhook:
+    imagePullSecrets:
+      - name: image-pull-secret
+namespace:
+  labels:
+    project-name: kubaralearn
+    stage: dev

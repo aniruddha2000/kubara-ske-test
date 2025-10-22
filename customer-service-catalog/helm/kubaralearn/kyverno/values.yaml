@@ -1,0 +1,30 @@
+crds:
+  install: true
+kyverno:
+  admissionController:
+    serviceMonitor:
+      additionalLabels:
+        monitoring.instance: kubaralearn-dev
+      enabled: true
+  backgroundController:
+    serviceMonitor:
+      additionalLabels:
+        monitoring.instance: kubaralearn-dev
+      enabled: true
+  cleanupController:
+    serviceMonitor:
+      additionalLabels:
+        monitoring.instance: kubaralearn-dev
+      enabled: true
+  global:
+    imagePullSecrets:
+      - name: image-pull-secret
+  reportsController:
+    serviceMonitor:
+      additionalLabels:
+        monitoring.instance: kubaralearn-dev
+      enabled: true
+namespace:
+  labels:
+    project-name: kubaralearn
+    stage: dev

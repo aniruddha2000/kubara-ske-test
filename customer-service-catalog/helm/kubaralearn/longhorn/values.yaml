@@ -1,0 +1,32 @@
+longhorn:
+  defaultSettings:
+    defaultReplicaCount: 1
+  ingress:
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-staging
+      nginx.ingress.kubernetes.io/auth-signin: https://$host/oauth2/start?rd=$escaped_request_uri
+      nginx.ingress.kubernetes.io/auth-url: https://$host/oauth2/auth
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
+    enabled: true
+    host: kubaralearn-dev.stackit.run
+    ingressClassName: nginx
+    path: /longhorn(/|$)(.*)
+    tls: true
+    tlsSecret: tls-longhorn
+  metrics:
+    serviceMonitor:
+      additionalLabels:
+        monitoring.instance: kubaralearn-dev
+      enabled: true
+  persistence:
+    defaultClass: true
+    defaultClassReplicaCount: 1
+  privateRegistry:
+    registrySecret: image-pull-secret
+namespace:
+  labels:
+    pod-security.kubernetes.io/audit: privileged
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/warn: privileged
+    project-name: kubaralearn
+    stage: dev

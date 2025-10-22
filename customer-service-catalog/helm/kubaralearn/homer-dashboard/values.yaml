@@ -1,0 +1,91 @@
+dashboardConfig:
+  colors:
+    dark:
+      background: '#232b34'
+      card-background: '#374452'
+      card-shadow: '#00000066'
+      highlight-hover: '#045464'
+      highlight-primary: '#232b34'
+      highlight-secondary: '#374452'
+      link: '#374452'
+      link-hover: '#ded576'
+      text: '#f3f3f2'
+      text-header: '#ffffff'
+      text-subtitle: '#ffffff'
+      text-title: '#ded576'
+    light:
+      background: '#f3f3f2'
+      card-background: '#ffffff'
+      card-shadow: '#00000026'
+      highlight-hover: '#347483'
+      highlight-primary: '#045464'
+      highlight-secondary: '#f8ea19'
+      link: '#045464'
+      link-hover: '#045464'
+      text: '#161616'
+      text-header: '#ffffff'
+      text-subtitle: '#045464'
+      text-title: '#161616'
+  connectivityCheck: true
+  footer: <p style="color:"#045464";"> STACKIT Edge Developer Portal</p>
+  header: true
+  logo: assets/icons/stackit-logo.png
+  proxy:
+    useCredentials: false
+  services:
+    - items:
+        - logo: /assets/tools/argocd.png
+          name: argocd
+          subtitle: GitOps Deployment Dashboard
+          target: _blank
+          url: /argocd/
+        - logo: /assets/tools/grafana.png
+          name: grafana
+          subtitle: Monitoring Dashboards
+          target: _blank
+          url: /grafana/
+        - logo: /assets/tools/prometheus.png
+          name: prometheus
+          subtitle: Prometheus Dashboard
+          target: _blank
+          url: /prometheus/
+        - logo: /assets/tools/alertmanager.png
+          name: alertmanager
+          subtitle: Alertmanager Dashboard
+          target: _blank
+          url: /alertmanager/
+        - logo: /assets/tools/kyverno.png
+          name: kyverno
+          subtitle: Policy Reporter Dashboard
+          target: _blank
+          url: /kyverno/
+      name: Tools
+    - items:
+        - logo: /assets/tools/secretsmanager.png
+          name: STACKIT Secretsmanager
+          url: https://portal.stackit.cloud/projects/replace-me-with-your-url
+        - logo: /assets/tools/jira.png
+          name: Jira
+          url: https://jira.schwarz/
+      name: DevOps Links
+  subtitle: dev
+  theme: default
+  title: STACKIT Edge Developer Portal
+imagePullSecrets:
+  - name: image-pull-secret
+ingress:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+    nginx.ingress.kubernetes.io/auth-signin: https://$host/oauth2/start?rd=$escaped_request_uri
+    nginx.ingress.kubernetes.io/auth-url: https://$host/oauth2/auth
+  enabled: true
+  host: kubaralearn-dev.stackit.run
+  path: /
+namespace:
+  labels:
+    project-name: kubaralearn
+    stage: dev
+serviceMonitor:
+  additionalLabels:
+    monitoring.instance: kubaralearn-dev
+  enabled: true

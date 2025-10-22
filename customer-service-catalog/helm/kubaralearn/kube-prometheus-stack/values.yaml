@@ -1,0 +1,178 @@
+externalSecrets:
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: kubaralearn-dev
+  secrets:
+    - dataFrom:
+        - remoteKey: grafana_credentials
+      target: grafana-admin-credentials
+    - dataFrom:
+        - remoteKey: grafana_oauth2_credentials
+      target: oauth2-credentials
+kube-prometheus-stack:
+  alertmanager:
+    alertmanagerSpec:
+      externalUrl: https://kubaralearn-dev.stackit.run/alertmanager
+      routePrefix: /alertmanager
+    ingress:
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-staging
+        nginx.ingress.kubernetes.io/auth-signin: https://$host/oauth2/start?rd=$escaped_request_uri
+        nginx.ingress.kubernetes.io/auth-url: https://$host/oauth2/auth
+      enabled: true
+      hosts:
+        - kubaralearn-dev.stackit.run
+      ingressClassName: nginx
+      pathType: ImplementationSpecific
+      paths:
+        - /alertmanager
+      tls:
+        - hosts:
+            - kubaralearn-dev.stackit.run
+          secretName: tls-alertmanager
+    serviceMonitor:
+      additionalLabels:
+        monitoring.instance: kubaralearn-dev
+  coreDns:
+    serviceMonitor:
+      additionalLabels:
+        monitoring.instance: kubaralearn-dev
+  global:
+    imagePullSecrets:
+      - name: image-pull-secret
+    imageRegistry: ""
+  grafana:
+    additionalDataSources:
+      - access: proxy
+        isDefault: false
+        name: loki
+        type: loki
+        url: http://loki-headless.loki.svc.cluster.local:3100
+        version: 1
+    admin:
+      existingSecret: grafana-admin-credentials
+      passwordKey: admin-password
+      userKey: admin-user
+    envFromSecrets:
+      - name: oauth2-credentials
+    grafana.ini:
+      auth.github:
+        allow_sign_up: true
+        allowed_organizations: '["oidc-org"]'
+        auto_login: false
+        client_id: ${client-id}
+        client_secret: ${client-secret}
+        enabled: true
+        name: Github
+        role_attribute_path: contains(groups[*], '@oidc-org/org-team') && 'Admin' || 'Viewer'
+        scopes: user:email,read:org
+      server:
+        root_url: https://kubaralearn-dev.stackit.run/grafana/
+        serve_from_sub_path: true
+    ingress:
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-staging
+        nginx.ingress.kubernetes.io/auth-signin: https://$host/oauth2/start?rd=$escaped_request_uri
+        nginx.ingress.kubernetes.io/auth-url: https://$host/oauth2/auth
+      enabled: true
+      hosts:
+        - kubaralearn-dev.stackit.run
+      ingressClassName: nginx
+      path: /grafana
+      pathType: ImplementationSpecific
+      tls:
+        - hosts:
+            - kubaralearn-dev.stackit.run
+          secretName: tls-grafana
+    serviceMonitor:
+      labels:
+        monitoring.instance: kubaralearn-dev
+  kube-state-metrics:
+    prometheus:
+      monitor:
+        additionalLabels:
+          monitoring.instance: kubaralearn-dev
+  kubeApiServer:
+    serviceMonitor:
+      additionalLabels:
+        monitoring.instance: kubaralearn-dev
+  kubeControllerManager:
+    serviceMonitor:
+      additionalLabels:
+        monitoring.instance: kubaralearn-dev
+  kubeDns:
+    serviceMonitor:
+      additionalLabels:
+        monitoring.instance: kubaralearn-dev
+  kubeScheduler:
+    serviceMonitor:
+      additionalLabels:
+        monitoring.instance: kubaralearn-dev
+  kubelet:
+    serviceMonitor:
+      additionalLabels:
+        monitoring.instance: kubaralearn-dev
+  prometheus:
+    ingress:
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-staging
+        nginx.ingress.kubernetes.io/auth-signin: https://$host/oauth2/start?rd=$escaped_request_uri
+        nginx.ingress.kubernetes.io/auth-url: https://$host/oauth2/auth
+      enabled: true
+      hosts:
+        - kubaralearn-dev.stackit.run
+      ingressClassName: nginx
+      pathType: ImplementationSpecific
+      paths:
+        - /prometheus
+      tls:
+        - hosts:
+            - kubaralearn-dev.stackit.run
+          secretName: tls-prometheus
+    prometheusSpec:
+      externalUrl: https://kubaralearn-dev.stackit.run/prometheus
+      retention: 10d
+      routePrefix: /prometheus
+      serviceMonitorSelector:
+        matchLabels:
+          monitoring.instance: kubaralearn-dev
+      storageSpec:
+        volumeClaimTemplate:
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 10Gi
+    serviceMonitor:
+      additionalLabels:
+        monitoring.instance: kubaralearn-dev
+    thanosServiceMonitor:
+      serviceMonitor:
+        additionalLabels:
+          monitoring.instance: kubaralearn-dev
+  prometheusOperator:
+    prometheus:
+      monitor:
+        additionalLabels:
+          monitoring.instance: kubaralearn-dev
+    serviceMonitor:
+      additionalLabels:
+        monitoring.instance: kubaralearn-dev
+  thanosRuler:
+    serviceMonitor:
+      additionalLabels:
+        monitoring.instance: kubaralearn-dev
+namespace:
+  labels:
+    pod-security.kubernetes.io/audit: privileged
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/warn: privileged
+    project-name: kubaralearn
+    stage: dev
+prometheus-blackbox-exporter:
+  global:
+    imageRegistry: quay.io
+  image:
+    pullSecrets:
+      - image-pull-secret

@@ -1,0 +1,15 @@
+ingress-nginx:
+  controller:
+    metrics:
+      serviceMonitor:
+        additionalLabels:
+          monitoring.instance: kubaralearn-dev
+        enabled: true
+  defaultBackend:
+    enabled: false
+  imagePullSecrets:
+    - name: image-pull-secret
+namespace:
+  labels:
+    project-name: kubaralearn
+    stage: dev

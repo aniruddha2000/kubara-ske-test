@@ -1,0 +1,21 @@
+addresses:
+  - 0.0.0.0/32
+metallb:
+  imagePullSecrets:
+    - name: image-pull-secret
+  prometheus:
+    serviceMonitor:
+      controller:
+        additionalLabels:
+          monitoring.instance: kubaralearn-dev
+      speaker:
+        additionalLabels:
+          monitoring.instance: kubaralearn-dev
+namespace:
+  labels:
+    pod-security.kubernetes.io/audit: privileged
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/warn: privileged
+    project-name: kubaralearn
+    stage: dev
+poolName: first-pool

@@ -1,0 +1,62 @@
+clusters:
+  - name: kubaralearn
+    stage: dev
+    projectId: 05915afc-6674-4daf-b488-243cda9a5b71
+    type: controlplane
+    dnsName: kubaralearn-dev.stackit.run
+    privateLoadBalancerIP: 0.0.0.0
+    publicLoadBalancerIP: 0.0.0.0
+    ssoOrg: oidc-org
+    ssoTeam: org-team
+    terraform:
+      kubernetesType: ske
+      kubernetesVersion: 1.33.5
+      dns:
+        name: kubaralearn-dev.stackit.run
+        email: aniruddha.basak@stackit.cloud
+    argocd:
+      repo:
+        https:
+          customer:
+            url: https://github.com/aniruddha2000/kubara-ske-test.git
+            targetRevision: main
+          managed:
+            url: https://github.com/aniruddha2000/kubara-ske-test.git
+            targetRevision: main
+    services:
+      argocd:
+        status: enabled
+      certManager:
+        status: enabled
+        clusterIssuer:
+          name: letsencrypt-staging
+          email: yourname@your-domain.de
+          server: https://acme-staging-v02.api.letsencrypt.org/directory
+      externalDns:
+        status: enabled
+      externalSecrets:
+        status: enabled
+      kubePrometheusStack:
+        status: enabled
+      ingressNginx:
+        status: enabled
+      kyverno:
+        status: enabled
+      kyvernoPolicies:
+        status: enabled
+      kyvernoPolicyReport:
+        status: enabled
+      loki:
+        status: enabled
+      cilium:
+        status: disabled
+      homerDashboard:
+        status: enabled
+      oauth2Proxy:
+        status: enabled
+      metricsServer:
+        status: disabled
+      metalLb:
+        status: disabled
+      longhorn:
+        status: disabled

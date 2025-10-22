@@ -1,0 +1,11 @@
+metrics-server:
+  imagePullSecrets:
+    - name: image-pull-secret
+  serviceMonitor:
+    additionalLabels:
+      monitoring:
+        instance: kubaralearn-dev
+namespace:
+  labels:
+    project-name: kubaralearn
+    stage: dev

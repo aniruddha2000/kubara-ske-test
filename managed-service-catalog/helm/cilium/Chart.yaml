@@ -1,0 +1,12 @@
+apiVersion: v2
+name: cilium
+description: Umbrella Chart for cilium
+type: application
+version: 0.0.3
+dependencies:
+  - name: template-library
+    repository: file://../template-library
+    version: 0.0.3
+  - name: cilium
+    repository: https://helm.cilium.io/
+    version: 1.18.2

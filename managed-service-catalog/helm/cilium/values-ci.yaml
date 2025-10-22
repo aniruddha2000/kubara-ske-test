@@ -1,0 +1,5 @@
+cilium:
+  k8sServiceHost: 0.0.0.0
+loadBalancerIPPool:
+  blocksStart: 0.0.0.0
+  blocksStop: 0.0.0.0

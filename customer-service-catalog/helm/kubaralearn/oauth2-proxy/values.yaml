@@ -1,0 +1,44 @@
+externalSecrets:
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: kubaralearn-dev
+  secrets:
+    - dataFrom:
+        - remoteKey: oauth2_credentials
+      target: oauth2-credentials
+namespace:
+  labels:
+    project-name: kubaralearn
+    stage: dev
+oauth2-proxy:
+  config:
+    configFile: |-
+      reverse_proxy = true
+      redirect_url = "https://kubaralearn-dev.stackit.run/oauth2/callback"
+      email_domains = [ "*" ]
+      cookie_secure = true
+      upstreams = [ "file:///dev/null" ]
+      github_org = "oidc-org"
+      github_team = "org-team"
+      provider = "github"
+      scope = "read:user user:email read:org"
+    existingSecret: oauth2-credentials
+  imagePullSecrets:
+    - name: image-pull-secret
+  ingress:
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-staging
+    className: nginx
+    enabled: true
+    hosts:
+      - kubaralearn-dev.stackit.run
+    path: /oauth2
+    tls:
+      - hosts:
+          - kubaralearn-dev.stackit.run
+        secretName: tls-oauth2-proxy
+  metrics:
+    serviceMonitor:
+      enabled: true
+      labels:
+        monitoring.instance: kubaralearn-dev

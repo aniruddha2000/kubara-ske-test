@@ -1,0 +1,150 @@
+argo-cd:
+  configs:
+    cm:
+      dex.config: |
+        connectors:
+          - type: github
+            id: github
+            name: GitHub
+            config:
+              clientID: $oauth2-credentials:client-id
+              clientSecret: $oauth2-credentials:client-secret
+              orgs:
+                - name: oidc-org
+      url: https://kubaralearn-dev.stackit.run/argocd
+    params:
+      server.basehref: /argocd
+      server.insecure: true
+      server.rootpath: /argocd
+    rbac:
+      policy.csv: |
+        g, oidc-org:org-team, role:admin
+      policy.default: role:readonly
+  controller:
+    metrics:
+      enabled: true
+      rules:
+        enabled: false
+      serviceMonitor:
+        additionalLabels:
+          monitoring.instance: kubaralearn-dev
+        enabled: true
+  global:
+    domain: kubaralearn-dev.stackit.run
+    imagePullSecrets:
+      - name: image-pull-secret
+    revisionHistoryLimit: 5
+  server:
+    ingress:
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-staging
+        nginx.ingress.kubernetes.io/auth-signin: https://$host/oauth2/start?rd=$escaped_request_uri
+        nginx.ingress.kubernetes.io/auth-url: https://$host/oauth2/auth
+        nginx.ingress.kubernetes.io/backend-protocol: HTTP
+        nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      enabled: true
+      ingressClassName: nginx
+      path: /argocd
+      tls: true
+    ingressGrpc:
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-staging
+        nginx.ingress.kubernetes.io/backend-protocol: GRPC
+      enabled: true
+      ingressClassName: nginx
+      path: /argocd
+      tls: true
+bootstrapValues:
+  applicationSets:
+    - apps:
+        - name: argocd
+          path: argo-cd
+        - name: kyverno
+          path: kyverno
+        - name: kyverno-policies
+          path: kyverno-policies
+        - name: external-secrets
+          path: external-secrets
+        - name: cert-manager
+          path: cert-manager
+        - name: ingress-nginx
+          path: ingress-nginx
+        - name: metallb
+          path: metallb
+        - name: external-dns
+          path: external-dns
+        - name: oauth2-proxy
+          path: oauth2-proxy
+        - name: longhorn
+          path: longhorn
+        - name: kube-prometheus-stack
+          path: kube-prometheus-stack
+        - name: loki
+          path: loki
+        - name: kyverno-policy-reporter
+          path: kyverno-policy-reporter
+        - name: homer-dashboard
+          path: homer-dashboard
+        - name: metrics-server
+          path: metrics-server
+      customerServices:
+        path: customer-service-catalog/helm
+        repoURL: https://github.com/aniruddha2000/kubara-ske-test.git
+        targetRevision: main
+      managedServices:
+        path: managed-service-catalog/helm
+        repoURL: https://github.com/aniruddha2000/kubara-ske-test.git
+        targetRevision: main
+      projectName: kubaralearn-dev
+  dockerPullSecrets:
+    - matchNamespaceLabels:
+        project-name: kubaralearn
+        stage: dev
+      name: image-pull-secret
+      remoteRef:
+        remoteKey: docker_config
+        remoteKeyProperty: pull-secret
+      secretStoreRef:
+        kind: ClusterSecretStore
+        name: kubaralearn-dev
+  projects:
+    - description: kubaralearn-dev project
+      name: kubaralearn-dev
+      namespace: argocd
+      orphanedResources:
+        ignore:
+          - kind: Secret
+            name: cert-manager-webhook-ca
+        warn: false
+      sourceRepos:
+        - registry.onstackit.cloud/stackit-edge-cloud-blueprint
+externalSecrets:
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: kubaralearn-dev
+  secrets:
+    - dataFrom:
+        - remoteKey: argo_oauth2_credentials
+      target: oauth2-credentials
+inClusterName: kubaralearn
+inClusterSecretLabels:
+  argocd: enabled
+  cert-manager: enabled
+  cilium: disabled
+  external-dns: enabled
+  external-secrets: enabled
+  homer-dashboard: enabled
+  ingress-nginx: enabled
+  kube-prometheus-stack: enabled
+  kyverno: enabled
+  kyverno-policies: enabled
+  kyverno-policy-reporter: enabled
+  loki: enabled
+  longhorn: disabled
+  metallb: disabled
+  metrics-server: disabled
+  oauth2-proxy: enabled
+namespace:
+  labels:
+    project-name: kubaralearn
+    stage: dev

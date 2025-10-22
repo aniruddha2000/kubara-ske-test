@@ -1,0 +1,10 @@
+apiVersion: "cilium.io/v2alpha1"
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: "service-pool-001"
+spec:
+  allowFirstLastIPs: "Yes"
+  blocks:
+    - start: {{ .Values.loadBalancerIPPool.blocksStart | default "change-me"}}
+      stop: {{ .Values.loadBalancerIPPool.blocksStop | default "change-me"}}
+  disabled: false

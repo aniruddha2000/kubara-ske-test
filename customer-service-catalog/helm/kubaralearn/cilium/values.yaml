@@ -1,0 +1,8 @@
+cilium:
+  imagePullSecrets:
+    - name: image-pull-secret
+  k8sServiceHost: changeme
+namespace:
+  labels:
+    project-name: kubaralearn
+    stage: dev

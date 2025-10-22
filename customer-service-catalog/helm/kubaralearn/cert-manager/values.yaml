@@ -1,0 +1,17 @@
+cert-manager:
+  global:
+    imagePullSecrets:
+      - name: image-pull-secret
+  prometheus:
+    servicemonitor:
+      enabled: true
+      labels:
+        monitoring.instance: kubaralearn-dev
+clusterIssuer:
+  email: yourname@your-domain.de
+  name: letsencrypt-staging
+  server: https://acme-staging-v02.api.letsencrypt.org/directory
+namespace:
+  labels:
+    project-name: kubaralearn
+    stage: dev

@@ -1,0 +1,33 @@
+namespace:
+  labels:
+    project-name: kubaralearn
+    stage: dev
+policy-reporter:
+  imagePullSecrets:
+    - name: image-pull-secret
+  metrics:
+    enabled: true
+  monitoring:
+    serviceMonitor:
+      labels:
+        monitoring.instance: kubaralearn-dev
+  replicaCount: 1
+  ui:
+    enabled: true
+    ingress:
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-staging
+        nginx.ingress.kubernetes.io/auth-signin: https://$host/oauth2/start?rd=$escaped_request_uri
+        nginx.ingress.kubernetes.io/auth-url: https://$host/oauth2/auth
+        nginx.ingress.kubernetes.io/rewrite-target: /$1
+      className: nginx
+      enabled: true
+      hosts:
+        - host: kubaralearn-dev.stackit.run
+          paths:
+            - path: /kyverno/(.*)
+              pathType: ImplementationSpecific
+      tls:
+        - hosts:
+            - kubaralearn-dev.stackit.run
+          secretName: tls-kyverno-ui
