@@ -67,3 +67,5 @@ out/
 /go.sum
 /go.mod
 bin/
+
+k8s.yaml

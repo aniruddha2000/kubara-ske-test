@@ -6,6 +6,9 @@ externalSecrets:
     - dataFrom:
         - remoteKey: grafana_credentials
       target: grafana-admin-credentials
+    - dataFrom:
+        - remoteKey: grafana_oauth2_credentials
+      target: oauth2-credentials
 kube-prometheus-stack:
   alertmanager:
     alertmanagerSpec:
@@ -14,6 +17,9 @@ kube-prometheus-stack:
     ingress:
       annotations:
         cert-manager.io/cluster-issuer: letsencrypt-staging
+        nginx.ingress.kubernetes.io/auth-signin: https://$host/oauth2/start?rd=$escaped_request_uri
+        nginx.ingress.kubernetes.io/auth-url: https://$host/oauth2/auth
+      enabled: true
       hosts:
         - kubaralearn-dev.stackit.run
       ingressClassName: nginx
@@ -50,12 +56,25 @@ kube-prometheus-stack:
     envFromSecrets:
       - name: oauth2-credentials
     grafana.ini:
+      auth.github:
+        allow_sign_up: true
+        allowed_organizations: '["oidc-org"]'
+        auto_login: false
+        client_id: ${client-id}
+        client_secret: ${client-secret}
+        enabled: true
+        name: Github
+        role_attribute_path: contains(groups[*], '@oidc-org/org-team') && 'Admin' || 'Viewer'
+        scopes: user:email,read:org
       server:
         root_url: https://kubaralearn-dev.stackit.run/grafana/
         serve_from_sub_path: true
     ingress:
       annotations:
         cert-manager.io/cluster-issuer: letsencrypt-staging
+        nginx.ingress.kubernetes.io/auth-signin: https://$host/oauth2/start?rd=$escaped_request_uri
+        nginx.ingress.kubernetes.io/auth-url: https://$host/oauth2/auth
+      enabled: true
       hosts:
         - kubaralearn-dev.stackit.run
       ingressClassName: nginx
@@ -97,6 +116,9 @@ kube-prometheus-stack:
     ingress:
       annotations:
         cert-manager.io/cluster-issuer: letsencrypt-staging
+        nginx.ingress.kubernetes.io/auth-signin: https://$host/oauth2/start?rd=$escaped_request_uri
+        nginx.ingress.kubernetes.io/auth-url: https://$host/oauth2/auth
+      enabled: true
       hosts:
         - kubaralearn-dev.stackit.run
       ingressClassName: nginx

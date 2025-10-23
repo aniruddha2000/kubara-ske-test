@@ -151,7 +151,7 @@ inClusterSecretLabels:
   longhorn: disabled
   metallb: disabled
   metrics-server: disabled
-  oauth2-proxy: disabled
+  oauth2-proxy: enabled
 namespace:
   labels:
     project-name: kubaralearn
